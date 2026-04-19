@@ -17,6 +17,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Set mvnw permissions
+        run: chmod +x mvnw
+
       - name: Build and push Docker image (amd64)
         uses: docker/build-push-action@v5
         with:

@@ -24,7 +24,9 @@ jobs:
           cache: maven
 
       - name: Retrain model
-        run: ./mvnw exec:java -Dexec.mainClass="ch.zhaw.deeplearningjava.footwear.Training" -B
+        run: |
+          chmod +x mvnw
+          ./mvnw exec:java -Dexec.mainClass="ch.zhaw.deeplearningjava.footwear.Training" -B
 
       - name: Commit updated model
         run: |
