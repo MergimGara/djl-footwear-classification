@@ -35,4 +35,5 @@ build/
 ### Others ###
 /models
 /ut-zap50k-images-square
-/ut-zap50k-images-square-small
+/ut-zap50k-images-square-smallut-zap50k-small/
+ut-zap50k-images-square/
