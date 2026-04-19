@@ -26,6 +26,9 @@ public class Inference {
 
     public Inference() {
         try {
+            // Modell von Azure Blob Storage laden (falls AZURE_STORAGE_CONNECTION_STRING gesetzt)
+            BlobModelDownloader.download();
+
             Model model = Models.getModel();
             Path modelDir = Paths.get("models");
             model.load(modelDir, Models.MODEL_NAME);

@@ -28,13 +28,43 @@ jobs:
           chmod +x mvnw
           ./mvnw exec:java -Dexec.mainClass="ch.zhaw.deeplearningjava.footwear.Training" -B
 
-      - name: Commit updated model
+      - name: Upload model to Azure Blob Storage
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add models/
-          git commit -m "model: retrain shoeclassifier [skip ci]" || echo "No changes to commit"
-          git push
+          pip install azure-storage-blob -q
+          python3 << 'EOF'
+          import os
+          from azure.storage.blob import BlobServiceClient
+
+          conn_str = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
+          client = BlobServiceClient.from_connection_string(conn_str)
+
+          # Höchsten Suffix der bestehenden Containers finden
+          suffix = 0
+          for c in client.list_containers():
+              name = c["name"]
+              if name.startswith("footwear-model-"):
+                  try:
+                      s = int(name.split("-")[-1])
+                      suffix = max(suffix, s)
+                  except ValueError:
+                      pass
+
+          # Neuen Container erstellen
+          suffix += 1
+          container_name = f"footwear-model-{suffix}"
+          print(f"Erstelle Container: {container_name}")
+          client.create_container(container_name)
+
+          # Modell-Dateien hochladen
+          container_client = client.get_container_client(container_name)
+          for fname in os.listdir("models"):
+              path = f"models/{fname}"
+              with open(path, "rb") as f:
+                  container_client.upload_blob(fname, f)
+              print(f"Hochgeladen: {fname}")
+          EOF
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3

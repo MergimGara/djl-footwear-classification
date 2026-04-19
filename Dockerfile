@@ -6,7 +6,6 @@ FROM eclipse-temurin:25-jdk-noble
 
 # Copy Files
 WORKDIR /usr/src/app
-COPY models models
 COPY src src
 COPY .mvn .mvn
 COPY pom.xml mvnw ./
