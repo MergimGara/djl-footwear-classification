@@ -26,7 +26,7 @@ jobs:
       - name: Retrain model
         run: |
           chmod +x mvnw
-          ./mvnw exec:java -Dexec.mainClass="ch.zhaw.deeplearningjava.footwear.Training" -B
+          ./mvnw compile exec:java -Dexec.mainClass="ch.zhaw.deeplearningjava.footwear.Training" -B
 
       - name: Upload model to Azure Blob Storage
         env:
